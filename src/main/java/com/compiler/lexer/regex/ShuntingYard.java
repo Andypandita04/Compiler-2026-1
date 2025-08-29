@@ -1,5 +1,10 @@
 package com.compiler.lexer.regex;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import java.util.Stack;
+
 /**
  * Utility class for regular expression parsing using the Shunting Yard
  * algorithm.
@@ -30,17 +35,27 @@ public class ShuntingYard {
      * @return Regular expression with explicit concatenation operators.
      */
     public static String insertConcatenationOperator(String regex) {
-        // TODO: Implement insertConcatenationOperator
         /*
             Pseudocode:
             For each character in regex:
-                - Append current character to output
+                - Append a character to output
                 - If not at end of string:
-                        - Check if current and next character form an implicit concatenation
+                        - Check if a and next character form an implicit concatenation
                         - If so, append '·' to output
             Return output as string
          */
-        throw new UnsupportedOperationException("Not implemented");
+        StringBuilder output = new StringBuilder();
+
+        for(int i = 0; i< regex.length(); i++ ){
+            output.append(regex.charAt(i)); // Append a character to output
+            if(i<regex.length()-1){ // If not at end of string
+                //Check if a and next character form an implicit concatenation
+                if(isOperand( regex.charAt(i+1))){
+                    output.append('·');
+                }
+            }
+        }
+        return output.toString();
     }
 
     /**
@@ -56,7 +71,12 @@ public class ShuntingYard {
         Pseudocode:
         Return true if c is not one of: '|', '*', '?', '+', '(', ')', '·'
          */
-        throw new UnsupportedOperationException("Not implemented");
+        char[] operators = {'|', '*', '?', '+', '(', ')', '·'};
+        for(char op :operators){
+            if(c==op) return false;
+        }
+        return true;
+        //throw new UnsupportedOperationException("Not implemented");
     }
 
     /**
@@ -68,7 +88,6 @@ public class ShuntingYard {
      * @return Regular expression in postfix notation.
      */
     public static String toPostfix(String infixRegex) {
-        // TODO: Implement toPostfix
         /*
         Pseudocode:
         1. Define operator precedence map
@@ -77,10 +96,54 @@ public class ShuntingYard {
             - If operand: append to output
             - If '(': push to stack
             - If ')': pop operators to output until '(' is found
-            - If operator: pop operators with higher/equal precedence, then push current operator
+            - If operator: pop operators with higher/equal precedence, then push a operator
         4. After loop, pop remaining operators to output
         5. Return output as string
          */
-        throw new UnsupportedOperationException("Not implemented");
+
+
+        Map<Character, Integer> precedence = new HashMap<>();
+        precedence.put('|', 1);
+        precedence.put('·', 2);
+        precedence.put('*', 3);
+        precedence.put('+', 4);
+        precedence.put('?', 3);
+        precedence.put('(', 0); 
+        precedence.put(')', 0); 
+
+        //insert explicit concatenation operators
+        infixRegex = insertConcatenationOperator(infixRegex);
+
+        StringBuilder output = new StringBuilder();
+        Stack<Character> operators = new Stack<>();
+
+        for (int i = 0; i < infixRegex.length(); i++) {
+            char a = infixRegex.charAt(i);
+
+            if (isOperand(a)) {
+                output.append(a);
+            }
+            if (a == '(') {
+                operators.push(a);
+            }
+            if (a == ')') {
+                while (!operators.isEmpty() && operators.peek() != '(') {
+                    output.append(operators.pop());
+                }
+                operators.pop(); // Pop'('
+            } else { // Case : 'a' is a operator
+                // compare precedence: true if the top has more precedence
+                boolean stack_more_precedence = precedence.get(operators.peek()) >= precedence.get(a);
+                while(!operators.isEmpty() && operators.peek() != '(' && stack_more_precedence) {
+                    output.append(operators.pop());
+                }
+                operators.push(a);
+            }
+        }
+
+        return output.toString();
     }
 }
+        
+
+
