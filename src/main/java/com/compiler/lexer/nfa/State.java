@@ -2,7 +2,7 @@ package com.compiler.lexer.nfa;
 
 import java.util.List;
 import java.util.ArrayList;
-//import java.util.Random;
+
 /**
  * Represents a state in a Non-deterministic Finite Automaton (NFA).
  * Each state has a unique identifier, a list of transitions to other states,
@@ -22,7 +22,7 @@ import java.util.ArrayList;
  * </p>
  */
 public class State {
-    private static int nextId = 0;
+    //private static int nextId = 0;
     /**
      * Unique identifier for this state.
      */
@@ -42,10 +42,8 @@ public class State {
      * Constructs a new state with a unique identifier and no transitions.
      * The state is not final by default.
      */
-    public State() {
-        //Random rndom = new Random();
-        //this.id = rndom.nextInt(1000); // Assign a unique ID
-        this.id = nextId++;
+    public State(int id_state) {
+        this.id = id_state;
         this.transitions = new ArrayList<>();
         this.isFinal = false;
     }
