@@ -92,7 +92,7 @@ public class State {
      * @param symbol the symbol for the transition
      * @param toState the state to transition to
      */
-    public void addTransition(char symbol, State toState) {
+    public void addTransition(Character symbol, State toState) {
         transitions.add(new Transition(symbol, toState));
     }
 }

@@ -18,16 +18,7 @@ public class NFA {
      */
     public final State endState;
 
-    /**
-     * The states of NFA
-     */
-    public List<State> states;
-
-    /**
-     * The transitions of NFA
-     */
-    public List<Transition> transitions;
-
+ 
     /**
      * Constructs a new NFA with the given start and end states.
      * @param start The initial state.
@@ -36,8 +27,6 @@ public class NFA {
     public NFA(State start, State end) {
         this.startState = start;
         this.endState = end;
-        this.states = new ArrayList<>();
-        this.transitions = new ArrayList<>();
     }
 
     /**
@@ -48,19 +37,6 @@ public class NFA {
         return this.startState;
     }
 
-    /**
-     * Add state to NFA
-     * @param e the state
-     */
-    public void addState(State e){
-        this.states.add(e);
-    }
 
-    /**
-     * Add transitions to NFA
-     * @param t
-     */
-    public void addTransition(Transition t){
-        this.transitions(t);
-    }
+
 }

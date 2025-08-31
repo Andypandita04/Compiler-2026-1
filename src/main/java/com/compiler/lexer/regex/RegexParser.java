@@ -2,8 +2,8 @@ package com.compiler.lexer.regex;
 
 import java.util.Stack;
 
-//import com.compiler.lexer.nfa.NFA;
-import com.compiler.lexer.nfa.*;
+import com.compiler.lexer.nfa.NFA;
+import com.compiler.lexer.nfa.State;
 
 /**
  * RegexParser
@@ -43,7 +43,7 @@ public class RegexParser {
      */
     public NFA parse(String infixRegex) {
         ShuntingYard shuntingYard = new ShuntingYard();
-        String postfixRegex = shuntingYard.infixToPostfix(infixRegex);
+        String postfixRegex = shuntingYard.toPostfix(infixRegex);
         return buildNfaFromPostfix(postfixRegex);
     }
 
@@ -55,7 +55,7 @@ public class RegexParser {
      */
     private NFA buildNfaFromPostfix(String postfixRegex) {
         Stack<NFA> stack = new Stack<>();
-        for (char c : postfixRegex.toCharArray()) {
+        for (Character c : postfixRegex.toCharArray()) {
             if (isOperand(c)) {
                 // Create an NFA for the operand and push it onto the stack
                 NFA nfa = this.createNfaForCharacter(c);
@@ -145,7 +145,7 @@ public class RegexParser {
      * @param c The character to create an NFA for.
      * @return The constructed NFA.
      */
-    private NFA createNfaForCharacter(char c) {
+    private NFA createNfaForCharacter(Character c) {
         State startState = new State();
         State endState = new State();
         endState.isFinal = true;
@@ -161,8 +161,8 @@ public class RegexParser {
      */
     private void handleConcatenation(Stack<NFA> stack) {
         // Pseudocode: Pop two NFAs,
-        nfa1 = stack.pop();
-        nfa2 = stack.pop();
+        NFA nfa1 = stack.pop();
+        NFA nfa2 = stack.pop();
         //connect end of first to start of second
         nfa1.endState.addTransition(null, nfa2.startState);
         nfa1.endState.isFinal = false;
@@ -176,8 +176,8 @@ public class RegexParser {
      */
     private void handleUnion(Stack<NFA> stack) {
         //Pop two NFAs,
-        nfa1  = stack.pop();
-        nfa2 = stack.pop();
+        NFA nfa1  = stack.pop();
+        NFA nfa2 = stack.pop();
 
         // create new start/end,
         State startState = new State();
@@ -234,10 +234,10 @@ public class RegexParser {
      * @param c The character to check.
      * @return True if the character is an operand, false if it is an operator.
      */
-    private boolean isOperand(char c) {
-        char[] operators = {'|', '*', '?', '+', '(', ')', '·'};
-        for(char op :operators){
-            if(c==op) return false;
+    private boolean isOperand(Character c) {
+        Character[] operators = {'|', '*', '?', '+', '(', ')', '·'};
+        for(Character op :operators){
+            if(c.equals(op)) return false;
         }
         return true;
     }
