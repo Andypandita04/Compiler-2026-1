@@ -22,7 +22,7 @@ import java.util.ArrayList;
  * </p>
  */
 public class State {
-    //private static int nextId = 0;
+    private static int nextId = 0;
     /**
      * Unique identifier for this state.
      */
@@ -42,8 +42,9 @@ public class State {
      * Constructs a new state with a unique identifier and no transitions.
      * The state is not final by default.
      */
-    public State(int id_state) {
-        this.id = id_state;
+    public State() {
+        this.id = nextId;
+        nextId += 1;
         this.transitions = new ArrayList<>();
         this.isFinal = false;
     }
@@ -84,5 +85,14 @@ public class State {
             }
         }
     return result;
+    }
+
+    /**
+     * Adds a transition from this state to another state.
+     * @param symbol the symbol for the transition
+     * @param toState the state to transition to
+     */
+    public void addTransition(char symbol, State toState) {
+        transitions.add(new Transition(symbol, toState));
     }
 }
