@@ -48,14 +48,56 @@ public class ShuntingYard {
 
         for(int i = 0; i< regex.length(); i++ ){
             output.append(regex.charAt(i)); // Append a character to output
+            boolean current_isOperand = isOperand(regex.charAt(i));
+
             if(i<regex.length()-1){ // If not at end of string
+
                 //Check if a and next character form an implicit concatenation
-                if(isOperand( regex.charAt(i+1))){
+                boolean next_isOperand = isOperand( regex.charAt(i+1));
+
+                // Case 1: current (c1) is operand and next (c2) is operand, then insert '·'
+                // examble : ( ab → a· b). 
+                if(current_isOperand && next_isOperand){
+                    output.append('·');
+                }
+                // Case 2: current (c1) is operand and next (c2) is `(`
+                // example: ( a( → a· (.
+                if(current_isOperand && regex.charAt(i+1) == '('){
+                    output.append('·');
+                }
+                // Case 3: current (c1) is `)` and next (c2) is operand
+                // example: ( )a → )· a).
+                if(regex.charAt(i) == ')' && next_isOperand){
+                    output.append('·');
+                }
+                // Case 4: current (c1) is unary and next (c2) is operand
+                // example: ( *a → *· a).
+                if(isUnaryOperator(regex.charAt(i)) && next_isOperand){
+                    output.append('·');
+                }
+                // Case 5: current (c1) is `)` and next (c2) is `(`
+                // example: ( )( → )· ().
+                if(regex.charAt(i) == ')' && regex.charAt(i+1) == '('){
                     output.append('·');
                 }
             }
         }
+        //System.out.println(output + "\n " + output.toString());
         return output.toString();
+    }
+
+    /**
+     * Determines if the given character is a unary operator (*, +, ?).
+     *
+     * @param c Character to evaluate.
+     * @return true if it is a unary operator, false otherwise.
+     */
+    private static boolean isUnaryOperator(char c) {
+        char[] unaryOperators = {'*', '+', '?'};
+        for(char op : unaryOperators){
+            if(c==op) return true;
+        }
+        return false;
     }
 
     /**
@@ -118,27 +160,30 @@ public class ShuntingYard {
         Stack<Character> operators = new Stack<>();
 
         for (int i = 0; i < infixRegex.length(); i++) {
+            //System.out.println(i);
             char a = infixRegex.charAt(i);
 
             if (isOperand(a)) {
                 output.append(a);
-            }
-            if (a == '(') {
+            } else if (a == '(') {
                 operators.push(a);
-            }
-            if (a == ')') {
+            } else if (a == ')') {
                 while (!operators.isEmpty() && operators.peek() != '(') {
                     output.append(operators.pop());
                 }
                 operators.pop(); // Pop'('
             } else { // Case : 'a' is a operator
                 // compare precedence: true if the top has more precedence
-                boolean stack_more_precedence = precedence.get(operators.peek()) >= precedence.get(a);
+                //System.out.println(a);
+                boolean stack_more_precedence = !operators.isEmpty() && precedence.get(operators.peek()) >= precedence.get(a);
                 while(!operators.isEmpty() && operators.peek() != '(' && stack_more_precedence) {
                     output.append(operators.pop());
                 }
                 operators.push(a);
             }
+        }
+        while(!operators.isEmpty()){
+            output.append(operators.pop());
         }
 
         return output.toString();
