@@ -37,6 +37,21 @@ public class NFA {
         return this.startState;
     }
 
+    /**
+     * Returns string represents the NFA
+     * recorver your state througn transitions, and print
+     * the state information
+     */
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("NFA:\n");
+        sb.append("Start State: ").append(startState).append("\n");
+        sb.append("End State: ").append(endState).append("\n");
+        //
+        
+        return sb.toString();
+    }
 
 
 }

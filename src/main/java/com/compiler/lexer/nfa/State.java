@@ -80,7 +80,7 @@ public class State {
     public List<State> getTransitions(char symbol) {
         List<State> result = new ArrayList<>();
         for ( Transition t : transitions) {
-            if (t.symbol == symbol){
+            if (t.symbol != null && t.symbol == symbol) {
                 result.add(t.toState);
             }
         }

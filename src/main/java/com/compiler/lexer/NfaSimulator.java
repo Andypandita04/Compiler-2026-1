@@ -81,8 +81,10 @@ public class NfaSimulator {
         }
 
         // 3/ 4.After processing all input characters, check if any current state is final
-        if(currentStates.contains(nfa.endState)) {
-            return true;
+        for (State state : currentStates) {
+            if (state.isFinal) {
+                return true;
+            }
         }
         return false;
     }
@@ -108,13 +110,10 @@ public class NfaSimulator {
             // - Add start to closureSet
             closureSet.add(start);
 
-            //- For each transition in start:
-            for (Transition t : start.transitions) {
-                // - If transition symbol is null:
+            //- For each state to reached with epsilon-transition of start:
+            for (State t : start.getEpsilonTransitions()) {
                      //- Recursively add epsilon-closure of destination state
-                if (t.symbol == null) {
-                    addEpsilonClosure(t.toState, closureSet);
-                }
+                addEpsilonClosure(t, closureSet);
             }
         }
     }
