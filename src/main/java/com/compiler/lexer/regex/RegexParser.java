@@ -128,8 +128,8 @@ public class RegexParser {
         endState.isFinal = true;
 
         // one or more repetitions
-        startState.addTransition(null, nfa.startState);
-        
+        nfa.endState.addTransition(null, nfa.startState);
+
         // connection new startState   with the current nfa
         startState.addTransition(null, nfa.startState);
         // connection new endState with the current nfa
@@ -161,8 +161,8 @@ public class RegexParser {
      */
     private void handleConcatenation(Stack<NFA> stack) {
         // Pseudocode: Pop two NFAs,
-        NFA nfa1 = stack.pop();
         NFA nfa2 = stack.pop();
+        NFA nfa1 = stack.pop();
         //connect end of first to start of second
         nfa1.endState.addTransition(null, nfa2.startState);
         nfa1.endState.isFinal = false;
