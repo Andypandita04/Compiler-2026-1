@@ -1,9 +1,12 @@
 package com.compiler.lexer;
 
+import java.util.HashSet;
 import java.util.Set;
-
 import com.compiler.lexer.nfa.NFA;
 import com.compiler.lexer.nfa.State;
+import com.compiler.lexer.nfa.Transition;
+
+
 
 /**
  * NfaSimulator
@@ -55,7 +58,33 @@ public class NfaSimulator {
          3. After input, if any state in currentStates is final, return true
          4. Otherwise, return false
         */
-        throw new UnsupportedOperationException("Not implemented");
+
+        //1. Initialize currentStates with epsilon-closure of NFA start state
+        Set<State> currentStates = new HashSet<>();
+        addEpsilonClosure(nfa.getStartState(), currentStates);
+
+        //2. For each character in input:
+        for (char c : input.toCharArray()) {
+            Set<State> nextStates = new HashSet<>();
+
+           // - For each state in currentStates:
+            for (State state : currentStates) {
+
+                // For each transition (state) that matches the current character:
+                // - Add epsilon-closure of destination state to nextStates
+                for (State t : state.getTransitions(c)) {
+                    addEpsilonClosure(t, nextStates);
+                }
+            }
+            // - Set currentStates to nextStates
+            currentStates = nextStates;
+        }
+
+        // 3/ 4.After processing all input characters, check if any current state is final
+        if(currentStates.contains(nfa.endState)) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -74,6 +103,19 @@ public class NfaSimulator {
                  - If transition symbol is null:
                      - Recursively add epsilon-closure of destination state
         */
-        throw new UnsupportedOperationException("Not implemented");
+        //  If start not in closureSet:
+        if (!closureSet.contains(start)) {
+            // - Add start to closureSet
+            closureSet.add(start);
+
+            //- For each transition in start:
+            for (Transition t : start.transitions) {
+                // - If transition symbol is null:
+                     //- Recursively add epsilon-closure of destination state
+                if (t.symbol == null) {
+                    addEpsilonClosure(t.toState, closureSet);
+                }
+            }
+        }
     }
 }
