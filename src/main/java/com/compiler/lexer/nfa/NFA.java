@@ -19,13 +19,25 @@ public class NFA {
     public final State endState;
 
     /**
+     * The states of NFA
+     */
+    public List<State> states;
+
+    /**
+     * The transitions of NFA
+     */
+    public List<Transition> transitions;
+
+    /**
      * Constructs a new NFA with the given start and end states.
      * @param start The initial state.
      * @param end The final (accepting) state.
      */
     public NFA(State start, State end) {
-        // TODO: Implement constructor
-        throw new UnsupportedOperationException("Not implemented");
+        this.startState = start;
+        this.endState = end;
+        this.states = new ArrayList<>();
+        this.transitions = new ArrayList<>();
     }
 
     /**
@@ -33,7 +45,22 @@ public class NFA {
      * @return the start state
      */
     public State getStartState() {
-    // TODO: Implement getStartState
-    throw new UnsupportedOperationException("Not implemented");
+        return this.startState;
+    }
+
+    /**
+     * Add state to NFA
+     * @param e the state
+     */
+    public void addState(State e){
+        this.states.add(e);
+    }
+
+    /**
+     * Add transitions to NFA
+     * @param t
+     */
+    public void addTransition(Transition t){
+        this.transitions(t);
     }
 }
