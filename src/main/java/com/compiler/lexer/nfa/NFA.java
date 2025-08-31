@@ -18,14 +18,15 @@ public class NFA {
      */
     public final State endState;
 
+ 
     /**
      * Constructs a new NFA with the given start and end states.
      * @param start The initial state.
      * @param end The final (accepting) state.
      */
     public NFA(State start, State end) {
-        // TODO: Implement constructor
-        throw new UnsupportedOperationException("Not implemented");
+        this.startState = start;
+        this.endState = end;
     }
 
     /**
@@ -33,7 +34,24 @@ public class NFA {
      * @return the start state
      */
     public State getStartState() {
-    // TODO: Implement getStartState
-    throw new UnsupportedOperationException("Not implemented");
+        return this.startState;
     }
+
+    /**
+     * Returns string represents the NFA
+     * recorver your state througn transitions, and print
+     * the state information
+     */
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        sb.append("NFA:\n");
+        sb.append("Start State: ").append(startState).append("\n");
+        sb.append("End State: ").append(endState).append("\n");
+        //
+        
+        return sb.toString();
+    }
+
+
 }
