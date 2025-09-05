@@ -3,6 +3,7 @@ package com.compiler.lexer.dfa;
 import java.util.Map;
 import java.util.Set;
 import java.util.HashSet;
+import java.util.HashMap;
 
 import com.compiler.lexer.nfa.State;
 
@@ -65,8 +66,8 @@ public class DfaState {
      * @param obj The object to compare.
      * @return True if the states are equal, false otherwise.
      */
-    @Override
-    public boolean equals(Object obj) {
+    //@Override
+    public boolean equals(Set<State> obj) {
         if (obj instanceof Set<State>) {
             Set<State> other = (Set<State>) obj;
             if (other.hashCode() != this.hashCode()) {

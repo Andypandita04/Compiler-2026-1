@@ -3,6 +3,8 @@ package com.compiler.lexer;
 import java.util.List;
 import java.util.Set;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Stack;
 
 import com.compiler.lexer.dfa.DFA;
 import com.compiler.lexer.dfa.DfaState;
@@ -72,7 +74,7 @@ public class NfaToDfaConverter {
 				Set<State> movedStates = move(currentDFAState.getNfaStates(), symbol);
 				Set<State> targetClosure = epsilonClosure(movedStates);
 				// If target set is new, create new DFA state and add to list/queue
-				targetDFAState = findDfaState(dfaStates, targetClosure);
+				DfaState targetDFAState = findDfaState(dfaStates, targetClosure);
 				if (targetDFAState == null) {
 					targetDFAState = new DfaState(targetClosure);
 					dfaStates.add(targetDFAState);
