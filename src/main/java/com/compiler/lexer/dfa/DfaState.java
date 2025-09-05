@@ -67,12 +67,12 @@ public class DfaState {
      */
     @Override
     public boolean equals(Object obj) {
-        if (obj instanceof DfaState) {
-            DfaState other = (DfaState) obj;
+        if (obj instanceof Set<State>) {
+            Set<State> other = (Set<State>) obj;
             if (other.hashCode() != this.hashCode()) {
                 return false;
             }else {
-                return this.nfaStates.equals(other.nfaStates);
+                return true;
             }
         }
         return false;
