@@ -2,6 +2,9 @@ package com.compiler.lexer;
 
 import java.util.List;
 import java.util.Set;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Stack;
 
 import com.compiler.lexer.dfa.DFA;
 import com.compiler.lexer.dfa.DfaState;
@@ -34,7 +37,6 @@ public class NfaToDfaConverter {
 	 * @return The resulting DFA
 	 */
 	public static DFA convertNfaToDfa(NFA nfa, Set<Character> alphabet) {
-		// TODO: Implement convertNfaToDfa
 		/*
 		 Pseudocode:
 		 1. Create initial DFA state from epsilon-closure of NFA start state
@@ -46,7 +48,56 @@ public class NfaToDfaConverter {
 		 3. Mark DFA states as final if any NFA state in their set is final
 		 4. Return DFA with start state and all DFA states
 		*/
-		throw new UnsupportedOperationException("Not implemented");
+		//1. Create initial DFA state from epsilon-closure of NFA start state
+		State startStateNFA = nfa.startState;
+		Set<State> startClosure = epsilonClosure(Set.of(startStateNFA));
+		DfaState startStateDFA = new DfaState(startClosure);
+
+		/**
+		 *  2. While there are unmarked DFA states:
+			  - For each symbol in alphabet:
+				  - Compute move and epsilon-closure for current DFA state
+				  - If target set is new, create new DFA state and add to list/queue
+				  - Add transition from current to target DFA state
+		 */
+		List<DfaState> dfaStates = new ArrayList<>(); // to final DFA 
+		dfaStates.add(startStateDFA);
+
+		List<DfaState> unmarkedStates = new ArrayList<>();
+		unmarkedStates.add(startStateDFA);
+
+		while (!unmarkedStates.isEmpty()) {
+			DfaState currentDFAState = unmarkedStates.remove(0);
+			// For each symbol in alphabet:
+			for (char symbol : alphabet) {
+				// Compute move and epsilon-closure for current DFA state
+				Set<State> movedStates = move(currentDFAState.getNfaStates(), symbol);
+				Set<State> targetClosure = epsilonClosure(movedStates);
+				// If target set is new, create new DFA state and add to list/queue
+				DfaState targetDFAState = findDfaState(dfaStates, targetClosure);
+				if (targetDFAState == null) {
+					targetDFAState = new DfaState(targetClosure);
+					dfaStates.add(targetDFAState);
+					unmarkedStates.add(targetDFAState);
+				}
+
+				// Add transition from current to target DFA state
+				currentDFAState.addTransition(symbol, targetDFAState);
+			}
+		}
+
+		// 3. Mark DFA states as final if any NFA state in their set is final
+		for (DfaState dfaState : dfaStates) {
+			for( State a: dfaState.getNfaStates()) {
+				if (a.isFinal) {
+					dfaState.setFinal(true);
+					break;
+				}
+			}
+		}
+
+		// 4. Return DFA with start state and all DFA states
+		return new DFA(startStateDFA, dfaStates);
 	}
 
 	/**
@@ -57,16 +108,25 @@ public class NfaToDfaConverter {
 	 * @return The epsilon-closure of the input states.
 	 */
 	private static Set<State> epsilonClosure(Set<State> states) {
-	// TODO: Implement epsilonClosure
-	/*
-	 Pseudocode:
-	 1. Initialize closure with input states
-	 2. Use stack to process states
-	 3. For each state, add all reachable states via epsilon transitions
-	 4. Return closure set
-	*/
-	throw new UnsupportedOperationException("Not implemented");
+		// 1. Initialize closure with input states
+		Set<State> closure = new HashSet<>(states);
+		// 2. Use stack to process states
+		Stack<State> stack = new Stack<>();
+		stack.addAll(states);
+		//3. For each state, add all reachable states via epsilon transitions
+	    //4. Return closure set
+		while (!stack.isEmpty()) {
+			State state = stack.pop();
+			for (State epsilonState : state.getEpsilonTransitions()) {
+				if (closure.add(epsilonState)) {
+					stack.push(epsilonState);
+				}
+			}
+		}
+		return closure;
 	}
+
+
 
 	/**
 	 * Returns the set of states reachable from a set of NFA states by a given symbol.
@@ -76,7 +136,6 @@ public class NfaToDfaConverter {
 	 * @return The set of reachable states.
 	 */
 	private static Set<State> move(Set<State> states, char symbol) {
-		// TODO: Implement move
 		/*
 		 Pseudocode:
 		 1. For each state in input set:
@@ -84,8 +143,14 @@ public class NfaToDfaConverter {
 				  - Add destination state to result set
 		 2. Return result set
 		*/
-		throw new UnsupportedOperationException("Not implemented");
+		Set<State> result = new HashSet<>();
+		for (State state : states) {
+			List<State> nextStates = state.getTransitions(symbol);
+			result.addAll(nextStates);
+		}
+		return result;
 	}
+
 
 	/**
 	 * Finds an existing DFA state representing a given set of NFA states.
@@ -95,13 +160,15 @@ public class NfaToDfaConverter {
 	 * @return The matching DFA state, or null if not found.
 	 */
 	private static DfaState findDfaState(List<DfaState> dfaStates, Set<State> targetNfaStates) {
-	   // TODO: Implement findDfaState
 	   /*
 	    Pseudocode:
 	    1. For each DFA state in list:
 		    - If its NFA state set equals target set, return DFA state
 	    2. If not found, return null
 	   */
-	   throw new UnsupportedOperationException("Not implemented");
+	    for(DfaState dfaState : dfaStates) {
+			if(dfaState.equals(targetNfaStates)) return dfaState;
+ 		} 
+		return null;
 	}
 }
