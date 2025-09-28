@@ -45,8 +45,55 @@ public class StaticAnalyzer {
          *
          * 3. Return the map of FIRST sets for all symbols.
          */
-        throw new UnsupportedOperationException("Not implemented");
+
+         // 1. Initialize FIRST sets for terminals and non-terminals
+         Map<Symbol, Set<Symbol>> firstSets = new HashMap<>();
+         for (Symbol symbol : grammar.getTerminals()) { 
+             firstSets.put(symbol, Set.of(symbol)); 
+         }
+         for (Symbol symbol : grammar.getNonTerminals()) { 
+             firstSets.put(symbol, Set.of()); 
+         }      
+        // 2. Repeat until no changes:
+        boolean changed;
+        do {
+            changed = false;
+            // For each production A -> X1 X2 ... Xn:
+            for (var production : grammar.getProductions()) {
+                Symbol nonTerminal = production.getLeft();
+                boolean allNullable = true;
+                boolean haveEpsilon = false;
+                //For each symbol Xi in the right-hand side:
+                for (var symbol : production.getRight()) {
+                    // Add FIRST(symbol) - {ε} to FIRST(nonTerminal)
+                    for (var sym :firstSets.get(symbol)) {
+                        if ( sym.name != "ε"   ) {
+                            firstSets.get(nonTerminal).add(sym);
+                            changed = true;
+                        }else {
+                            haveEpsilon = true;
+                        }
+                    }
+                    // If ε is in FIRST(Xi), continue to next Xi Otherwise, break
+                    if(!haveEpsilon) {
+                        allNullable = false;
+                        break;
+                    }
+
+                }
+                //  If ε is in FIRST(Xi) for all i, add ε to FIRST(A)
+                if(allNullable) {
+                    Symbol epsilon = new Symbol("ε", SymbolType.TERMINAL);
+                    firstSets.get(nonTerminal).add(epsilon);
+                    changed = true;
+                }
+            } 
+        } while (changed);
+
+        return firstSets;
     }
+
+
 
     /**
      * Calculates and returns the FOLLOW sets for non-terminals.
